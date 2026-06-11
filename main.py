@@ -94,8 +94,9 @@ async def route_chat_query(payload: ChatPayload, db: AsyncSession = Depends(get_
     try:
         # 3. RAG: Retrieve context from Pinecone Permanent Memory
         try:
+            import asyncio
             vault = VectorMemoryVault.get_instance()
-            context = vault.recall_facts(payload.message)
+            context = await asyncio.to_thread(vault.recall_facts, payload.message)
         except Exception as memory_err:
             context = f"(Pinecone Memory Offline: {str(memory_err)})"
 
@@ -121,8 +122,9 @@ async def route_chat_query(payload: ChatPayload, db: AsyncSession = Depends(get_
             # Log the tool usage
             tools_used.append(function_name)
             
-            # Execute the strict deterministic engine
-            engine_res = EngineRegistry.execute(engine_name, args)
+            # Execute the strict deterministic engine without blocking the async event loop
+            import asyncio
+            engine_res = await asyncio.to_thread(EngineRegistry.execute, engine_name, args)
             
             bot_response = engine_res["result_text"]
             chart_data = engine_res["chart_data"]

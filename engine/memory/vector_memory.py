@@ -63,10 +63,20 @@ class VectorMemoryVault:
         """Chunk a document, embed it, and store it permanently in Pinecone."""
         chunks = self.chunk_text(text)
         
+        import time
         vectors = []
         for i, chunk in enumerate(chunks):
             vector_id = f"{title.replace(' ', '_')}_chunk_{i}_{uuid.uuid4().hex[:8]}"
-            embedding = self.generate_embeddings(chunk)
+            try:
+                embedding = self.generate_embeddings(chunk)
+            except Exception as e:
+                # If we hit rate limits, pause and skip this chunk
+                print(f"Skipping chunk due to embedding error: {e}")
+                time.sleep(2)
+                continue
+            
+            # Rate limiting protection for free tier API
+            time.sleep(1)
             
             # We store the raw text as metadata so we can read it later
             metadata = {
