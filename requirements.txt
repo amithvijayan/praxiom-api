@@ -10,3 +10,4 @@ cloud-sql-python-connector[asyncpg]
 google-generativeai
 pinecone
 beautifulsoup4
+duckduckgo-search
