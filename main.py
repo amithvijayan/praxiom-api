@@ -37,14 +37,25 @@ class ChatPayload(BaseModel):
 from engine.registry import EngineRegistry
 import engine.engineering.bess_sizing
 import engine.engineering.transformer_sizing
-import engine.engineering.load_flow_analysis
-import engine.sustainability.ghg_protocol
-import engine.sustainability.carbon_tax_liability
-import engine.sustainability.decarbonization_roi
-import engine.utility_business.financials
-import engine.utility_business.ppa_modeling
-import engine.utility_business.policy_compliance
-import engine.memory.autonomous_crawler
+from engine.engineering.load_flow_analysis import LoadFlowAnalysisEngine
+from engine.sustainability.decarbonization_roi import DecarbonizationROI
+from engine.utility_business.policy_compliance import PolicyComplianceEngine
+
+# Phase 9: Omniscience Expansion Imports
+from engine.memory.deep_research import DeepResearchEngine
+from engine.engineering.short_circuit import ShortCircuitAnalysisEngine
+from engine.engineering.power_quality import PowerQualityHarmonicsEngine
+from engine.engineering.microgrid_stability import MicrogridStabilityEngine
+from engine.engineering.ev_fleet import EVFleetChargingEngine
+from engine.engineering.nuclear_smr import NuclearSMREngine
+from engine.engineering.wind_aerodynamics import WindAerodynamicsEngine
+from engine.engineering.hybrid_solar import HybridSolarEngine
+from engine.sustainability.lifecycle_carbon import LifecycleCarbonAssessmentEngine
+from engine.sustainability.green_hydrogen import GreenHydrogenViabilityEngine
+from engine.utility_business.ppa_modeler import PowerPurchaseAgreementEngine
+from engine.utility_business.grid_interconnection import GridInterconnectionTariffEngine
+from engine.mutual.omni_masterplan import OmniSystemMasterplanEngine
+
 from engine.memory.vector_memory import VectorMemoryVault
 
 import os
@@ -54,6 +65,34 @@ from dotenv import load_dotenv
 load_dotenv()
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 
+# Register Base Engines
+engine_registry = EngineRegistry()
+from engine.engineering.bess_sizing import BESSSizingEngine
+from engine.engineering.transformer_sizing import TransformerSizingEngine
+from engine.sustainability.carbon_tax_liability import CarbonTaxLiabilityEngine
+from engine.sustainability.ghg_protocol import GHGProtocolEngine
+engine_registry.register("size_bess_capacity", "Sizes Battery Energy Storage Systems based on load profiles.", BESSSizingEngine().calculate)
+engine_registry.register("size_transformer", "Sizes Transformer capacity and calculates losses.", TransformerSizingEngine().calculate)
+engine_registry.register("calculate_carbon_tax_liability", "Calculates carbon tax liabilities based on emissions.", CarbonTaxLiabilityEngine().calculate)
+engine_registry.register("calculate_ghg_emissions", "Calculates Scope 1 & 2 GHG Protocol emissions.", GHGProtocolEngine().calculate)
+engine_registry.register("calculate_load_flow", "Calculates bus voltages, active/reactive power flows, and line losses.", LoadFlowAnalysisEngine().calculate)
+engine_registry.register("calculate_decarbonization_roi", "Macro-engine that calculates ROI of renewable investments vs carbon taxes.", DecarbonizationROI().calculate)
+engine_registry.register("check_policy_compliance", "Checks utility policy compliance for interconnections.", PolicyComplianceEngine().calculate)
+
+# Register Phase 9 Omniscience Engines
+engine_registry.register("search_web_and_learn", "Autonomously searches the web, scrapes the top 3 results, and permanently stores the knowledge in Pinecone vector memory.", DeepResearchEngine().calculate)
+engine_registry.register("calculate_short_circuit", "Calculates Symmetrical and Asymmetrical Fault Currents based on IEC 60909.", ShortCircuitAnalysisEngine().calculate)
+engine_registry.register("calculate_power_quality_harmonics", "Calculates Total Harmonic Distortion (THD) and sizes active harmonic filters.", PowerQualityHarmonicsEngine().calculate)
+engine_registry.register("calculate_microgrid_stability", "Calculates microgrid islanding stability and synthetic inertia adequacy.", MicrogridStabilityEngine().calculate)
+engine_registry.register("calculate_ev_fleet_charging", "Calculates peak load coincident demand for heavy-duty EV fleet charging depots.", EVFleetChargingEngine().calculate)
+engine_registry.register("calculate_nuclear_smr_output", "Calculates electrical output and annual generation for Small Modular Nuclear Reactors.", NuclearSMREngine().calculate)
+engine_registry.register("calculate_wind_aerodynamics", "Calculates extractable wind power based on Betz's Law and rotor sweep area.", WindAerodynamicsEngine().calculate)
+engine_registry.register("calculate_hybrid_solar_yield", "Evaluates yield for Online, Offline, or Hybrid solar topologies.", HybridSolarEngine().calculate)
+engine_registry.register("calculate_lifecycle_carbon", "Calculates Scope 1, 2, and 3 lifecycle embodied carbon emissions.", LifecycleCarbonAssessmentEngine().calculate)
+engine_registry.register("calculate_green_hydrogen", "Calculates annual Green Hydrogen production and Levelized Cost of Hydrogen (LCOH).", GreenHydrogenViabilityEngine().calculate)
+engine_registry.register("calculate_ppa_revenue", "Calculates cumulative revenue for Power Purchase Agreements with annual escalators.", PowerPurchaseAgreementEngine().calculate)
+engine_registry.register("calculate_grid_interconnection", "Estimates grid interconnection capital costs based on capacity and distance.", GridInterconnectionTariffEngine().calculate)
+engine_registry.register("calculate_omnisystem_masterplan", "Ultimate macro-engine that integrates a Nuclear SMR, Green Hydrogen production, PPA revenue, and Lifecycle Carbon.", OmniSystemMasterplanEngine().calculate)
 # Initialize the Gemini Model with our Universal Engine tools
 system_instruction = (
     "You are Praxiom Core v3.0, an expert Orchestrator for ISTA. "
