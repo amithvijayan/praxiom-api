@@ -88,6 +88,17 @@ EngineRegistry.register("green_hydrogen")(GreenHydrogenViabilityEngine)
 EngineRegistry.register("ppa_revenue")(PowerPurchaseAgreementEngine)
 EngineRegistry.register("grid_interconnection")(GridInterconnectionTariffEngine)
 EngineRegistry.register("omnisystem_masterplan")(OmniSystemMasterplanEngine)
+
+# Phase 10 Advanced Engineering Registration
+from engine.engineering.power_equipment_testing import PowerEquipmentTestingEngine
+from engine.engineering.relay_testing import RelayTestingEngine
+from engine.engineering.substation_design import SubstationDesignEngine
+from engine.engineering.transmission_design import TransmissionDesignEngine
+
+EngineRegistry.register("power_equipment_testing")(PowerEquipmentTestingEngine)
+EngineRegistry.register("relay_testing")(RelayTestingEngine)
+EngineRegistry.register("substation_design")(SubstationDesignEngine)
+EngineRegistry.register("transmission_design")(TransmissionDesignEngine)
 # Initialize the Gemini Model with our Universal Engine tools
 system_instruction = (
     "You are Praxiom Core v3.0, an expert Orchestrator for ISTA. "
