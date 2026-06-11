@@ -75,19 +75,19 @@ from engine.sustainability import decarbonization_roi
 from engine.utility_business import policy_compliance
 
 # Phase 9 Omniscience Engines Registration
-EngineRegistry.register("search_web_and_learn")(DeepResearchEngine)
-EngineRegistry.register("calculate_short_circuit")(ShortCircuitAnalysisEngine)
-EngineRegistry.register("calculate_power_quality_harmonics")(PowerQualityHarmonicsEngine)
-EngineRegistry.register("calculate_microgrid_stability")(MicrogridStabilityEngine)
-EngineRegistry.register("calculate_ev_fleet_charging")(EVFleetChargingEngine)
-EngineRegistry.register("calculate_nuclear_smr_output")(NuclearSMREngine)
-EngineRegistry.register("calculate_wind_aerodynamics")(WindAerodynamicsEngine)
-EngineRegistry.register("calculate_hybrid_solar_yield")(HybridSolarEngine)
-EngineRegistry.register("calculate_lifecycle_carbon")(LifecycleCarbonAssessmentEngine)
-EngineRegistry.register("calculate_green_hydrogen")(GreenHydrogenViabilityEngine)
-EngineRegistry.register("calculate_ppa_revenue")(PowerPurchaseAgreementEngine)
-EngineRegistry.register("calculate_grid_interconnection")(GridInterconnectionTariffEngine)
-EngineRegistry.register("calculate_omnisystem_masterplan")(OmniSystemMasterplanEngine)
+EngineRegistry.register("deep_research")(DeepResearchEngine)
+EngineRegistry.register("short_circuit_analysis")(ShortCircuitAnalysisEngine)
+EngineRegistry.register("power_quality_harmonics")(PowerQualityHarmonicsEngine)
+EngineRegistry.register("microgrid_stability")(MicrogridStabilityEngine)
+EngineRegistry.register("ev_fleet_charging")(EVFleetChargingEngine)
+EngineRegistry.register("nuclear_smr_output")(NuclearSMREngine)
+EngineRegistry.register("wind_aerodynamics")(WindAerodynamicsEngine)
+EngineRegistry.register("hybrid_solar_yield")(HybridSolarEngine)
+EngineRegistry.register("lifecycle_carbon")(LifecycleCarbonAssessmentEngine)
+EngineRegistry.register("green_hydrogen")(GreenHydrogenViabilityEngine)
+EngineRegistry.register("ppa_revenue")(PowerPurchaseAgreementEngine)
+EngineRegistry.register("grid_interconnection")(GridInterconnectionTariffEngine)
+EngineRegistry.register("omnisystem_masterplan")(OmniSystemMasterplanEngine)
 # Initialize the Gemini Model with our Universal Engine tools
 system_instruction = (
     "You are Praxiom Core v3.0, an expert Orchestrator for ISTA. "
