@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+gunicorn
+sqlalchemy
+aiosqlite
+asyncpg
+python-dotenv
+pydantic
+cloud-sql-python-connector[asyncpg]
+google-generativeai

@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+praxiom_local.db
+.git/
+.gitignore
+Dockerfile

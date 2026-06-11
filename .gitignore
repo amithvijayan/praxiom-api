@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+praxiom_local.db
+list_models.py
