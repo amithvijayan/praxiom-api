@@ -26,7 +26,7 @@ class VectorMemoryVault:
         if self.index_name not in self.pc.list_indexes().names():
             self.pc.create_index(
                 name=self.index_name,
-                dimension=768, 
+                dimension=3072, 
                 metric='cosine',
                 spec=ServerlessSpec(
                     cloud='aws',
@@ -37,9 +37,9 @@ class VectorMemoryVault:
         self.index = self.pc.Index(self.index_name)
 
     def generate_embeddings(self, text: str) -> List[float]:
-        """Generate 768-dimensional embeddings using Gemini."""
+        """Generate 3072-dimensional embeddings using Gemini."""
         result = genai.embed_content(
-            model="models/text-embedding-004",
+            model="models/gemini-embedding-2",
             content=text,
             task_type="retrieval_document",
             title="ISTA Knowledge Base"
@@ -91,7 +91,7 @@ class VectorMemoryVault:
     def recall_facts(self, query: str, top_k: int = 3) -> str:
         """Search Pinecone for the most mathematically relevant facts."""
         query_embedding = genai.embed_content(
-            model="models/text-embedding-004",
+            model="models/gemini-embedding-2",
             content=query,
             task_type="retrieval_query",
         )['embedding']

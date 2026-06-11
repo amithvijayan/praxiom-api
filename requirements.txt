@@ -8,5 +8,5 @@ python-dotenv
 pydantic
 cloud-sql-python-connector[asyncpg]
 google-generativeai
-pinecone-client
+pinecone
 beautifulsoup4
