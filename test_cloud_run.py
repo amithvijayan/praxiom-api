@@ -3,7 +3,7 @@ import json
 
 data = json.dumps({
     "session_id": "test1234",
-    "message": "hello"
+    "message": "Read this URL and learn from it: https://en.wikipedia.org/wiki/Electricity_market"
 }).encode('utf-8')
 
 req = urllib.request.Request(
