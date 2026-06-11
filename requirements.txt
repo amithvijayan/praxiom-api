@@ -8,6 +8,8 @@ python-dotenv
 pydantic
 cloud-sql-python-connector[asyncpg]
 google-generativeai
-pinecone
+pinecone-client
 beautifulsoup4
 duckduckgo-search
+aiohttp
+yfinance

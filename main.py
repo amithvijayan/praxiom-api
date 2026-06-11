@@ -99,6 +99,13 @@ EngineRegistry.register("power_equipment_testing")(PowerEquipmentTestingEngine)
 EngineRegistry.register("relay_testing")(RelayTestingEngine)
 EngineRegistry.register("substation_design")(SubstationDesignEngine)
 EngineRegistry.register("transmission_design")(TransmissionDesignEngine)
+
+# Phase 11 God-Tier Expansion
+from engine.market.realtime_feed import RealtimeMarketFeedEngine
+from engine.memory.crawler_fleet import AsyncCrawlerFleetEngine
+
+EngineRegistry.register("realtime_market_feed")(RealtimeMarketFeedEngine)
+EngineRegistry.register("crawler_fleet_swarm")(AsyncCrawlerFleetEngine)
 # Initialize the Gemini Model with our Universal Engine tools
 system_instruction = (
     "You are Praxiom Core v3.0, an expert Orchestrator for ISTA. "
