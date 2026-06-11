@@ -10,5 +10,6 @@ cloud-sql-python-connector[asyncpg]
 google-generativeai
 pinecone-client
 beautifulsoup4
+requests
 duckduckgo-search
 aiohttp

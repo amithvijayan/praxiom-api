@@ -1,26 +1,20 @@
-import aiohttp
-import asyncio
+import requests
 
 class RealtimeMarketFeedEngine:
-    async def _fetch_ticker(self, session: aiohttp.ClientSession, ticker: str) -> dict:
+    def _fetch_ticker(self, ticker: str) -> dict:
         url = f"https://query2.finance.yahoo.com/v8/finance/chart/{ticker}?interval=1d"
         headers = {'User-Agent': 'Mozilla/5.0'}
         try:
-            async with session.get(url, headers=headers, timeout=5) as response:
-                if response.status == 200:
-                    data = await response.json()
-                    meta = data.get('chart', {}).get('result', [{}])[0].get('meta', {})
-                    price = meta.get('regularMarketPrice', 'N/A')
-                    vol = meta.get('regularMarketVolume', 'N/A')
-                    return {"ticker": ticker, "price": price, "volume": vol}
-                return {"ticker": ticker, "price": "N/A", "volume": "N/A"}
+            response = requests.get(url, headers=headers, timeout=5)
+            if response.status_code == 200:
+                data = response.json()
+                meta = data.get('chart', {}).get('result', [{}])[0].get('meta', {})
+                price = meta.get('regularMarketPrice', 'N/A')
+                vol = meta.get('regularMarketVolume', 'N/A')
+                return {"ticker": ticker, "price": price, "volume": vol}
+            return {"ticker": ticker, "price": "N/A", "volume": "N/A"}
         except Exception:
             return {"ticker": ticker, "price": "N/A", "volume": "N/A"}
-
-    async def _fetch_all(self, tickers: list[str]) -> list[dict]:
-        async with aiohttp.ClientSession() as session:
-            tasks = [self._fetch_ticker(session, t) for t in tickers]
-            return await asyncio.gather(*tasks)
 
     def calculate(self, ticker_symbols: str) -> dict:
         """
@@ -30,10 +24,9 @@ class RealtimeMarketFeedEngine:
         try:
             tickers = [t.strip().upper() for t in ticker_symbols.split(',')]
             
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            results = loop.run_until_complete(self._fetch_all(tickers))
-            loop.close()
+            # Fetch sequentially using lightweight synchronous requests
+            # This completely avoids asyncio event loop conflicts in FastAPI's ThreadPool
+            results = [self._fetch_ticker(t) for t in tickers]
 
             results_text = "**[LIVE API] REAL-TIME ENERGY MARKET TELEMETRY:**\n\n"
             chart_data_series = []
@@ -75,3 +68,4 @@ class RealtimeMarketFeedEngine:
             
         except Exception as e:
             return {"status": "error", "result": f"Real-Time API fetch failed: {str(e)}"}
+
