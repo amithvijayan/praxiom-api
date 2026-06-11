@@ -12,4 +12,3 @@ pinecone-client
 beautifulsoup4
 duckduckgo-search
 aiohttp
-yfinance
