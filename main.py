@@ -41,6 +41,8 @@ import engine.sustainability.ghg_protocol
 import engine.sustainability.carbon_tax_liability
 import engine.utility_business.financials
 import engine.utility_business.ppa_modeling
+import engine.memory.autonomous_crawler
+from engine.memory.vector_memory import VectorMemoryVault
 
 import os
 import google.generativeai as genai
@@ -51,10 +53,11 @@ genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 
 # Initialize the Gemini Model with our Universal Engine tools
 system_instruction = (
-    "You are Praxiom Core v2.0, an expert Orchestrator. "
-    "Your ONLY job is to extract parameters from user prompts and call your registered Physics Engines. "
+    "You are Praxiom Core v3.0, an expert Orchestrator for ISTA. "
+    "Your job is to extract parameters from user prompts and call your registered Physics Engines and Tools. "
+    "If the user provides a URL or asks you to read a webpage, use the web_crawler tool. "
     "You MUST NEVER perform mathematical calculations yourself. Always call a tool. "
-    "If no tool matches, ask the user for clarification."
+    "If no tool matches, use the Context provided to answer the question without hallucinating."
 )
 model = genai.GenerativeModel(
     model_name="gemini-2.5-flash", 
@@ -65,7 +68,7 @@ model = genai.GenerativeModel(
 @app.post("/api/v1/chat/stream")
 async def route_chat_query(payload: ChatPayload, db: AsyncSession = Depends(get_db)):
     """
-    Route Chat Query: Intercepts prompt, uses Gemini to trigger Zero-Hallucination Engine.
+    Route Chat Query: Intercepts prompt, retrieves RAG context, uses Gemini to trigger tools.
     """
     # 1. Ensure the session exists
     result = await db.execute(select(ChatSession).where(ChatSession.id == payload.session_id))
@@ -89,8 +92,21 @@ async def route_chat_query(payload: ChatPayload, db: AsyncSession = Depends(get_
     chart_data = None
 
     try:
-        # Call Gemini asynchronously to avoid blocking the event loop!
-        response = await model.generate_content_async(payload.message)
+        # 3. RAG: Retrieve context from Pinecone Permanent Memory
+        try:
+            vault = VectorMemoryVault.get_instance()
+            context = vault.recall_facts(payload.message)
+        except Exception as memory_err:
+            context = f"(Pinecone Memory Offline: {str(memory_err)})"
+
+        # Formulate Augmented Prompt
+        prompt = payload.message
+        if context and "Offline" not in context:
+            prompt = f"{context}\n\nUser Prompt: {payload.message}"
+
+        # Call Gemini asynchronously
+        response = await model.generate_content_async(prompt)
+
         
         # Check if Gemini decided to call one of our tools
         if response.parts and getattr(response.parts[0], 'function_call', None):
