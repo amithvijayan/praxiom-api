@@ -36,8 +36,11 @@ class ChatPayload(BaseModel):
 
 from engine.registry import EngineRegistry
 import engine.engineering.bess_sizing
+import engine.engineering.transformer_sizing
 import engine.sustainability.ghg_protocol
+import engine.sustainability.carbon_tax_liability
 import engine.utility_business.financials
+import engine.utility_business.ppa_modeling
 
 import os
 import google.generativeai as genai
