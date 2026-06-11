@@ -181,8 +181,8 @@ async def route_chat_query(payload: ChatPayload, db: AsyncSession = Depends(get_
             import asyncio
             engine_res = await asyncio.to_thread(EngineRegistry.execute, engine_name, args)
             
-            bot_response = engine_res["result_text"]
-            chart_data = engine_res["chart_data"]
+            bot_response = engine_res.get("result_text", engine_res.get("result", str(engine_res)))
+            chart_data = engine_res.get("chart_data", None)
             
         else:
             # Gemini decided not to call a tool, so we just return its plain text answer.
