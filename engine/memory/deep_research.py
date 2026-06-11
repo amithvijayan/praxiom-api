@@ -3,13 +3,13 @@ import requests
 from bs4 import BeautifulSoup
 from duckduckgo_search import DDGS
 import logging
-from engine.memory.vector_memory import VectorMemory
+from engine.memory.vector_memory import VectorMemoryVault
 
 logger = logging.getLogger(__name__)
 
 class DeepResearchEngine:
     def __init__(self):
-        self.memory = VectorMemory()
+        self.memory = VectorMemoryVault.get_instance()
 
     def fetch_url_text(self, url: str) -> str:
         """Fetches and extracts text from a URL using BeautifulSoup."""

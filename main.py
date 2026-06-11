@@ -37,9 +37,9 @@ class ChatPayload(BaseModel):
 from engine.registry import EngineRegistry
 import engine.engineering.bess_sizing
 import engine.engineering.transformer_sizing
-from engine.engineering.load_flow_analysis import LoadFlowAnalysisEngine
+from engine.engineering.load_flow_analysis import LoadFlowAnalysis
 from engine.sustainability.decarbonization_roi import DecarbonizationROI
-from engine.utility_business.policy_compliance import PolicyComplianceEngine
+from engine.utility_business.policy_compliance import PolicyCompliance
 
 # Phase 9: Omniscience Expansion Imports
 from engine.memory.deep_research import DeepResearchEngine
@@ -65,34 +65,29 @@ from dotenv import load_dotenv
 load_dotenv()
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 
-# Register Base Engines
-engine_registry = EngineRegistry()
-from engine.engineering.bess_sizing import BESSSizingEngine
-from engine.engineering.transformer_sizing import TransformerSizingEngine
-from engine.sustainability.carbon_tax_liability import CarbonTaxLiabilityEngine
-from engine.sustainability.ghg_protocol import GHGProtocolEngine
-engine_registry.register("size_bess_capacity", "Sizes Battery Energy Storage Systems based on load profiles.", BESSSizingEngine().calculate)
-engine_registry.register("size_transformer", "Sizes Transformer capacity and calculates losses.", TransformerSizingEngine().calculate)
-engine_registry.register("calculate_carbon_tax_liability", "Calculates carbon tax liabilities based on emissions.", CarbonTaxLiabilityEngine().calculate)
-engine_registry.register("calculate_ghg_emissions", "Calculates Scope 1 & 2 GHG Protocol emissions.", GHGProtocolEngine().calculate)
-engine_registry.register("calculate_load_flow", "Calculates bus voltages, active/reactive power flows, and line losses.", LoadFlowAnalysisEngine().calculate)
-engine_registry.register("calculate_decarbonization_roi", "Macro-engine that calculates ROI of renewable investments vs carbon taxes.", DecarbonizationROI().calculate)
-engine_registry.register("check_policy_compliance", "Checks utility policy compliance for interconnections.", PolicyComplianceEngine().calculate)
+# Register Base Engines (decorators run on import)
+from engine.engineering import bess_sizing
+from engine.engineering import transformer_sizing
+from engine.engineering import load_flow_analysis
+from engine.sustainability import ghg_protocol
+from engine.sustainability import carbon_tax_liability
+from engine.sustainability import decarbonization_roi
+from engine.utility_business import policy_compliance
 
-# Register Phase 9 Omniscience Engines
-engine_registry.register("search_web_and_learn", "Autonomously searches the web, scrapes the top 3 results, and permanently stores the knowledge in Pinecone vector memory.", DeepResearchEngine().calculate)
-engine_registry.register("calculate_short_circuit", "Calculates Symmetrical and Asymmetrical Fault Currents based on IEC 60909.", ShortCircuitAnalysisEngine().calculate)
-engine_registry.register("calculate_power_quality_harmonics", "Calculates Total Harmonic Distortion (THD) and sizes active harmonic filters.", PowerQualityHarmonicsEngine().calculate)
-engine_registry.register("calculate_microgrid_stability", "Calculates microgrid islanding stability and synthetic inertia adequacy.", MicrogridStabilityEngine().calculate)
-engine_registry.register("calculate_ev_fleet_charging", "Calculates peak load coincident demand for heavy-duty EV fleet charging depots.", EVFleetChargingEngine().calculate)
-engine_registry.register("calculate_nuclear_smr_output", "Calculates electrical output and annual generation for Small Modular Nuclear Reactors.", NuclearSMREngine().calculate)
-engine_registry.register("calculate_wind_aerodynamics", "Calculates extractable wind power based on Betz's Law and rotor sweep area.", WindAerodynamicsEngine().calculate)
-engine_registry.register("calculate_hybrid_solar_yield", "Evaluates yield for Online, Offline, or Hybrid solar topologies.", HybridSolarEngine().calculate)
-engine_registry.register("calculate_lifecycle_carbon", "Calculates Scope 1, 2, and 3 lifecycle embodied carbon emissions.", LifecycleCarbonAssessmentEngine().calculate)
-engine_registry.register("calculate_green_hydrogen", "Calculates annual Green Hydrogen production and Levelized Cost of Hydrogen (LCOH).", GreenHydrogenViabilityEngine().calculate)
-engine_registry.register("calculate_ppa_revenue", "Calculates cumulative revenue for Power Purchase Agreements with annual escalators.", PowerPurchaseAgreementEngine().calculate)
-engine_registry.register("calculate_grid_interconnection", "Estimates grid interconnection capital costs based on capacity and distance.", GridInterconnectionTariffEngine().calculate)
-engine_registry.register("calculate_omnisystem_masterplan", "Ultimate macro-engine that integrates a Nuclear SMR, Green Hydrogen production, PPA revenue, and Lifecycle Carbon.", OmniSystemMasterplanEngine().calculate)
+# Phase 9 Omniscience Engines Registration
+EngineRegistry.register("search_web_and_learn")(DeepResearchEngine)
+EngineRegistry.register("calculate_short_circuit")(ShortCircuitAnalysisEngine)
+EngineRegistry.register("calculate_power_quality_harmonics")(PowerQualityHarmonicsEngine)
+EngineRegistry.register("calculate_microgrid_stability")(MicrogridStabilityEngine)
+EngineRegistry.register("calculate_ev_fleet_charging")(EVFleetChargingEngine)
+EngineRegistry.register("calculate_nuclear_smr_output")(NuclearSMREngine)
+EngineRegistry.register("calculate_wind_aerodynamics")(WindAerodynamicsEngine)
+EngineRegistry.register("calculate_hybrid_solar_yield")(HybridSolarEngine)
+EngineRegistry.register("calculate_lifecycle_carbon")(LifecycleCarbonAssessmentEngine)
+EngineRegistry.register("calculate_green_hydrogen")(GreenHydrogenViabilityEngine)
+EngineRegistry.register("calculate_ppa_revenue")(PowerPurchaseAgreementEngine)
+EngineRegistry.register("calculate_grid_interconnection")(GridInterconnectionTariffEngine)
+EngineRegistry.register("calculate_omnisystem_masterplan")(OmniSystemMasterplanEngine)
 # Initialize the Gemini Model with our Universal Engine tools
 system_instruction = (
     "You are Praxiom Core v3.0, an expert Orchestrator for ISTA. "
