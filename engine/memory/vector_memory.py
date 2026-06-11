@@ -65,7 +65,8 @@ class VectorMemoryVault:
         
         import time
         vectors = []
-        for i, chunk in enumerate(chunks):
+        # Limit to 3 chunks to prevent any possible Cloud Run memory/timeout limits on free tier
+        for i, chunk in enumerate(chunks[:3]):
             vector_id = f"{title.replace(' ', '_')}_chunk_{i}_{uuid.uuid4().hex[:8]}"
             try:
                 embedding = self.generate_embeddings(chunk)
