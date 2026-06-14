@@ -17,4 +17,4 @@ COPY . .
 
 # Run the application with gunicorn wrapping uvicorn for production
 # Cloud Run expects the app to listen on the port defined by the PORT environment variable
-CMD exec gunicorn main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:${PORT:-8000} --timeout 300
+CMD exec gunicorn main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:${PORT:-8000} --timeout 300

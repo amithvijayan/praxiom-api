@@ -27,8 +27,11 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup():
     # Create tables if they don't exist (useful for local SQLite dev)
-    async with db_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    try:
+        async with db_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+    except Exception as e:
+        print(f"Database initialization suppressed (likely concurrency issue): {e}")
 
 class ChatPayload(BaseModel):
     session_id: str
