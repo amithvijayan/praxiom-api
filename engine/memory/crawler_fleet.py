@@ -61,13 +61,12 @@ class AsyncCrawlerFleetEngine:
             # 4. Bulk Upsert into Memory
             total_vectors = 0
             for i, text in enumerate(valid_texts):
-                doc_id = f"swarm_{search_query.replace(' ', '_')}_{i}"
-                self.memory.upsert(
+                chunks_stored = self.memory.memorize_document(
                     text=text,
-                    metadata={"query": search_query, "source": urls[i], "type": "swarm_intel"},
-                    doc_id=doc_id
+                    source_url=urls[i],
+                    title=f"Swarm Intel: {search_query}"
                 )
-                total_vectors += 1
+                total_vectors += chunks_stored
                 
             result_text = (
                 f"> **[SWARM ACTIVE] MASSIVE WEB CRAWLER FLEET**\n"
