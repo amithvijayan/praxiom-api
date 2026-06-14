@@ -167,26 +167,34 @@ async def route_chat_query(payload: ChatPayload, db: AsyncSession = Depends(get_
         response = await model.generate_content_async(prompt)
 
         
-        # Check if Gemini decided to call one of our tools
-        if response.parts and getattr(response.parts[0], 'function_call', None):
-            fc = response.parts[0].function_call
-            function_name = fc.name
-            args = dict(fc.args)
+        # Check if Gemini decided to call one or more tools
+        function_calls = [p.function_call for p in response.parts if getattr(p, 'function_call', None)]
+        
+        if function_calls:
+            bot_response = ""
+            for fc in function_calls:
+                function_name = fc.name
+                args = dict(fc.args)
+                
+                # Manual routing to our registry
+                engine_name = function_name.replace("execute_", "")
+                tools_used.append(function_name)
+                
+                # Execute the strict deterministic engine without blocking the async event loop
+                import asyncio
+                try:
+                    engine_res = await asyncio.to_thread(EngineRegistry.execute, engine_name, args)
+                    res_text = engine_res.get("result_text", engine_res.get("result", str(engine_res)))
+                    
+                    bot_response += f"{res_text}\n\n"
+                    
+                    # Store chart data of the last executed tool that has it
+                    if engine_res.get("chart_data"):
+                        chart_data = engine_res.get("chart_data")
+                except Exception as tool_err:
+                    bot_response += f"[{function_name} Engine Error]: {str(tool_err)}\n\n"
             
-            # Since auto-execution is tricky with **kwargs, we'll manually route it 
-            # to our registry using the function name it predicted.
-            engine_name = function_name.replace("execute_", "")
-            
-            # Log the tool usage
-            tools_used.append(function_name)
-            
-            # Execute the strict deterministic engine without blocking the async event loop
-            import asyncio
-            engine_res = await asyncio.to_thread(EngineRegistry.execute, engine_name, args)
-            
-            bot_response = engine_res.get("result_text", engine_res.get("result", str(engine_res)))
-            chart_data = engine_res.get("chart_data", None)
-            
+            bot_response = bot_response.strip()
         else:
             # Gemini decided not to call a tool, so we just return its plain text answer.
             bot_response = response.text
